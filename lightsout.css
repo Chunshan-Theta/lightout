@@ -1,0 +1,28 @@
+
+
+.level1 {
+    width:300px;
+    height:310px;
+    background-size: cover;
+    background-image:url(level1.jpg);
+    z-index:5;
+    margin: 50px;
+}
+
+.level2 {
+    width:400px;
+    height:410px;
+    background-size: contain;
+    background-image:url(level2.jpg);
+    z-index:5;
+    margin: 50px;
+}
+
+.level3 {
+    width:500px;
+    height:520px;
+    background-size: contain;
+    background-image:url(level3.jpg);
+    z-index:5;
+    margin: 50px;
+}

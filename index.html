@@ -1,0 +1,329 @@
+<!DOCTYPE HTML>
+<!--
+	Editorial by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Lights Out! 關燈遊戲</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<script src="lightsout.js"></script>
+		<link rel="Stylesheet" type="text/css" href="lightsout.css" />
+		<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+
+		<script type="text/javascript">
+
+
+			var snd = new Audio();
+			snd.src = "BGM.mp3";
+			//snd.play();
+			snd.loop = true; //設定循環播放
+			//停止
+			function SP(){
+				s = document.getElementById('SP').value
+				if (s%2 == 1) {
+					snd.pause();
+			    } else {
+			    	snd.play();
+			    }
+			}
+			function spp(){
+				document.getElementById('SP').value++;
+			}
+			function changeLevelhandle(level){
+				if (confirm("it would RESET your game.are you sure?")) {
+		      changeLevel(level);
+					refreshRankboard();
+		    } else {
+		      console.log("cancel");
+		    }
+
+
+			}
+			function initPage(){
+				resizeGame(3);
+				resizeBoard(3);
+				SP();
+				spp();
+
+				var divs = document.getElementsByClassName("lightDiv");
+				for(var dividx in divs){
+					unitDiv = divs[dividx];
+					if(unitDiv.setAttribute){
+						unitDiv.setAttribute('onclick', 'alert("Pressing \'New Game !\' button to start the game.");');
+					}
+				}
+			}
+			function refreshRankboard(){
+				 var currentLevel = document.getElementById('size').value.toString() ;
+				 var tag = currentLevel+"*"+currentLevel;
+				 $.getJSON( "./api.php",{"tag":tag})
+				  .done(function( data ) {
+
+							var rankListText = "<ul>";
+							//var unitPlayer =json[1];
+					    //console.log( "JSON Data: " + unitPlayer["name"]+","+unitPlayer["sec"] );
+							for(var idx in data){
+								var unitPlayer =data[idx];
+								rankListText +="<li>No."
+								rankListText +=idx+" "
+								rankListText += unitPlayer["name"];
+								rankListText +=",time: "
+								rankListText += unitPlayer["sec"];
+								rankListText +=" sec</li>"
+							}
+						 	rankListText+="</ul>";
+		 				 	console.log(rankListText);
+		 				 	var ranks = document.getElementById("Ranklist");
+		 				 	ranks.innerHTML=rankListText;
+
+							//console.log(json);
+
+
+
+				  	})
+				  .fail(function( jqxhr, textStatus, error ) {
+				    var err = textStatus + ", " + error;
+				    console.log( "Request Failed: " + err );
+					});
+
+			}
+		</script>
+	</head>
+	<body class="is-preload" onload="initPage();refreshRankboard();">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Main -->
+					<div id="main">
+						<div class="inner">
+
+							<!-- Header -->
+								<header id="header">
+									<a href="index.html" class="logo"><strong>Lights Out! 關燈遊戲</strong></a>
+									<ul class="icons">
+										<li><a href="#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
+										<li><a href="#" class="icon fa-facebook"><span class="label">Facebook</span></a></li>
+										<li><a href="#" class="icon fa-snapchat-ghost"><span class="label">Snapchat</span></a></li>
+										<li><a href="#" class="icon fa-instagram"><span class="label">Instagram</span></a></li>
+										<li><a href="#" class="icon fa-medium"><span class="label">Medium</span></a></li>
+									</ul>
+								</header>
+
+							<!-- Banner -->
+								<section id="banner">
+									<div class="content">
+										<header>
+											<h1>Lights Out! 關燈遊戲</h1>
+											<p>Lights Out is an electronic game released by Tiger Electronics in 1995.</p>
+										</header>
+										<p>1995，Tiger Toys 開發本遊戲的電子版稱之為 Lights Out。這個遊
+											戲有很多的別名，有人稱為點燈遊戲，英文也有人稱為 Lights off，
+											不過事實上規則都是相同的。這類型遊戲在網路上有很多資源可供使用，當
+											然也有不少變型的遊戲被開發出來。</p>
+
+										<ul class="actions">
+											<li><a target="_blank" href="https://en.wikipedia.org/wiki/Lights_Out_(game)" class="button big">Go To Wiki</a></li>
+										</ul>
+									</div>
+									<span class="image object">
+										<img src="images/pic10.jpg" alt="" />
+									</span>
+								</section>
+
+								<!-- Section -->
+									<section>
+										<header class="major">
+											<h2>開始遊戲</h2>
+										</header>
+										<div class="maindiv">
+											<center>
+												<h2>Play Lights Out Game</h2>
+												<p>
+
+
+												Choose board size for Lights Out game:
+												<button onclick="changeLevelhandle(3);">3x3</button> or
+												<button onclick="changeLevelhandle(4)">4X4</button> or
+												<button onclick="changeLevelhandle(5);">5x5</button>
+												<button onclick="javascript:SP(),spp();">BGM♪</button>
+
+
+												<input type="hidden" id="size" name="size" value="3">
+												<input type="hidden" id="SP" name="SP" value="1">
+												</p>
+												Time: <span id="timer"></span><br />
+												Movements: <span id="counter"></span><br />
+												<button style="width:150px;" onclick="javascript:gameStart();">New Game!</button><!--<button onclick="javascript:reStart();" hidden>Restart！</button>-->
+												<div id="game">
+													<span id="square" class="board"></span><br />
+												</div>
+
+											</center>
+
+										</div>
+									</section>
+								<!-- Section -->
+									<section>
+										<header class="major">
+											<h2>Rank</h2>
+										</header>
+										<center><div id="Ranklist">
+												<!--
+												<ul>
+												  <li>Item 1,Theta</li>
+													<li>Item 2</li>
+													<li>Item 3</li>
+													<li>Item 4</li>
+													<li>Item 5</li>
+													<li>Item 6</li>
+													<li>Item 7</li>
+													<li>Item 8</li>
+													<li>Item 9</li>
+													<li>Item 10</li>
+												</ul>
+											-->
+
+
+										</div></center>
+									</section>
+							<!-- Section -->
+								<section>
+									<header class="major">
+										<h2>輔助文獻</h2>
+									</header>
+									<div class="features">
+										<article>
+											<span class="icon fa-diamond"></span>
+											<div class="content">
+												<h3>輕鬆解有趣的益智遊戲「點燈」</h3>
+												<p>網路上有一個有趣的益智遊戲「點燈」，這個遊戲方法很簡單：就是動動腦筋，將畫面上
+														的燈全部點亮就可過關。但是點燈的方法很特別，即是當你點選其中一個燈，該燈以及上下
+														左右四方的燈將會變成與原來相反的狀況。亦即原本亮的燈會變暗；原本暗的燈會變亮。本
+														篇作品主要研究點燈遊戲之基本原理與解法，根據點燈原理設計出一套解題工具（拼圖），
+														並研究出一個「奇偶判別法」合併解題，此外，我們觀察出解的對稱性質與最佳解之規律性
+														來加速破解點燈盤面的速度，進而嘗試將所得出之結論推廣到一般點燈盤面。</p>
+												<a target="_blank" href="https://activity.ntsec.gov.tw/activity/race-1/43/pdf/d/030405.pdf" class="button big">Learn More</a>
+											</div>
+
+										</article>
+										<article>
+											<span class="icon fa-paper-plane"></span>
+											<div class="content">
+												<h3>一關二淨－－以線性代數解析關燈遊戲</h3>
+												<p>關燈遊戲，規則即「關掉所有的燈」。按任一個方格時，便等於按了該方格及相鄰
+														的方格的開關機制，依循此規則關掉所有的燈，即算是完成遊戲。
+														我們的研究方向著力於尋找平面（二維）的破解策略，即讓所有的燈由亮變暗的正
+														解法，並進一步推導出求解的一般式。
+														我們首先從一直線（一維）開始觀察、研究，並將所得規律套用至二維 m×n 的情況，
+														利用線性代數，配合 Excel 軟體和矩陣的應用，更有效率地求得正解。接下來以此
+														方法延伸運用在任意形狀上，甚至推展至初始狀態不全為亮的情形。
+														目前我們已經有系統地研究出一套方法，能解決一維和二維的任意盤面，我們更期
+														許未來能深入探討一組與多組正解的出現情況，以及影響是否有正解的原因。</p>
+												<a target="_blank" href="http://web.fg.tp.edu.tw/~tfghdb/blog/wp-content/uploads/2016/01/WL19_pp001-pp026_%E4%B8%80%E9%97%9C%E4%BA%8C%E6%B7%A8-%E4%BB%A5%E7%B7%9A%E6%80%A7%E4%BB%A3%E6%95%B8%E8%A7%A3%E6%9E%90%E9%97%9C%E7%87%88%E9%81%8A%E6%88%B2.pdf" class="button big">Learn More</a>
+											</div>
+
+										</article>
+
+									</div>
+								</section>
+
+
+
+						</div>
+					</div>
+
+				<!-- Sidebar -->
+					<div id="sidebar">
+						<div class="inner">
+
+							<!-- Search
+								<section id="search" class="alt">
+									<form method="post" action="#">
+										<input type="text" name="query" id="query" placeholder="Search" />
+									</form>
+								</section>-->
+
+							<!-- Menu -->
+								<nav id="menu">
+									<header class="major">
+										<h2>Menu</h2>
+									</header>
+									<ul>
+										<li><a href="index.html">Homepage</a></li>
+										<!--
+										<li>
+											<span class="opener">Submenu</span>
+											<ul>
+												<li><a href="#">Lorem Dolor</a></li>
+												<li><a href="#">Ipsum Adipiscing</a></li>
+												<li><a href="#">Tempus Magna</a></li>
+												<li><a href="#">Feugiat Veroeros</a></li>
+											</ul>
+										</li>
+									-->
+
+									</ul>
+								</nav>
+
+							<!-- Section
+								<section>
+									<header class="major">
+										<h2>Ante interdum</h2>
+									</header>
+									<div class="mini-posts">
+										<article>
+											<a href="#" class="image"><img src="images/pic07.jpg" alt="" /></a>
+											<p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore aliquam.</p>
+										</article>
+										<article>
+											<a href="#" class="image"><img src="images/pic08.jpg" alt="" /></a>
+											<p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore aliquam.</p>
+										</article>
+										<article>
+											<a href="#" class="image"><img src="images/pic09.jpg" alt="" /></a>
+											<p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore aliquam.</p>
+										</article>
+									</div>
+									<ul class="actions">
+										<li><a href="#" class="button">More</a></li>
+									</ul>
+								</section>-->
+
+							<!-- Section -->
+								<section>
+									<header class="major">
+										<h2>Get in touch</h2>
+									</header>
+									<p>Sed varius enim lorem ullamcorper dolore aliquam aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin sed aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.</p>
+									<ul class="contact">
+										<li class="fa-envelope-o">information@untitled.tld</li>
+										<li class="fa-phone">(000) 000-0000</li>
+										<li class="fa-home">1234 Somewhere Road #8254<br />
+										Nashville, TN 00000-0000</li>
+									</ul>
+								</section>
+
+							<!-- Footer
+								<footer id="footer">
+									<p class="copyright">&copy; Untitled. All rights reserved. Demo Images: <a href="https://unsplash.com">Unsplash</a>. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
+								</footer>-->
+
+						</div>
+					</div>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>
